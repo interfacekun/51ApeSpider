@@ -25,7 +25,7 @@ class Dao():
 		dbName = dbName or self.dbName
 		userName = userName or self.userName
 		password = password or self.password
-		self.db = pymysql.connect(host, userName, password, dbName)
+		self.db = pymysql.connect(host, userName, password, dbName, charset="utf8")
 		self.cursor = self.db.cursor()
 		return self.cursor
 
