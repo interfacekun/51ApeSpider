@@ -13,13 +13,16 @@ class Spider():
 
 	def __init__(self):
 		self.user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
-		self.header = { 'User-Agent' : user_agent }
+		self.headers = {'User-Agent':self.user_agent}
 
-	def POST(self, url, header = None, data = {}):
-		header = header or self.header
+	def POST(self, url, headers = None, data = {}):
+		headers = headers or self.headers
 		try:
-			data = urllib.urlencode(values)
-			request = urllib2.Request(url, data, header)
+
+			if data :
+				data = urllib.urlencode(data)
+
+			request = urllib2.Request(url, data, headers)
 			response = urllib2.urlopen(request, timeout = 10)
 			page = response.read()
 			return page
@@ -27,18 +30,26 @@ class Spider():
 			print e.reason
 			return None
 
-	def GET(self, url, header = None):
-		header = header or self.header
+	def GET(self, url, headers = None, data = {}):
+		headers = headers or self.headers
 		try:
-			data = urllib.urlencode(values)
-			request = urllib2.Request(url,header = header)
+
+			if data :
+				dataStr = urllib.urlencode(data)
+				url = url + "?" + dataStr
+				print(url)
+
+			request = urllib2.Request(url,headers = headers)
 			response = urllib2.urlopen(request, timeout = 10)
 			page = response.read()
 			return page
 		except urllib2.URLError, e:
 			print e.reason
 			return None
-
-
 
 if __name__ == '__main__':
+	spider = Spider()
+	url = "http://www.baidu.com/"
+	data = {"name":"123", "pwd":"123"}
+	page = spider.GET(url, None, data)
+	print(page)
