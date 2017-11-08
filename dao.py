@@ -38,8 +38,8 @@ class Dao():
 			self.db.commit()
 			results = self.cursor.fetchall()
 			return results
-		except:
-			print "test error"
+		except Exception as e:
+			print "sql error", sql, e
 			self.db.rollback()
 
 if __name__ == '__main__':

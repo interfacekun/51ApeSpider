@@ -9,6 +9,7 @@
 
 from dao import Dao
 from spider import Spider
+import chardet
 
 if __name__ == '__main__':
 	dao = Dao()
@@ -31,4 +32,5 @@ if __name__ == '__main__':
 	for row in results :
 		print row[2], row[1]
 		spider.getArtistMuisc(row[2], row[1])
-		sql = "update artist set `get`=1 where `url`='%s';" % (row[1])
+		sql = "update artist set `get`=1 where `id`=%d;" % (row[0])
+		dao.launchSQL(sql)
