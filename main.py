@@ -24,10 +24,11 @@ if __name__ == '__main__':
 	# 	sql = "insert into artist(`artist`, `url`) values('%s', '%s');" % (m.group(2), m.group(1))
 	# 	dao.launchSQL(sql)
 	
-	sql  = "select * from artist;"
+	sql  = "select * from artist where `get`<>1;"
 
 	results = dao.launchSQL(sql)
 
 	for row in results :
 		print row[2], row[1]
 		spider.getArtistMuisc(row[2], row[1])
+		sql = "update artist set `get`=1 where `url`='%s';" % (row[1])
