@@ -34,11 +34,12 @@ class Dao():
 
 	def launchSQL(self, sql):
 		try:
-			self.cursor.execute(sql)
+			test = self.cursor.execute(sql)
 			self.db.commit()
 			results = self.cursor.fetchall()
 			return results
 		except:
+			print "test error"
 			self.db.rollback()
 
 if __name__ == '__main__':

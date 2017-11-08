@@ -15,11 +15,19 @@ if __name__ == '__main__':
 	spider = Spider()
 	dao.connect()
 
-	url = "http://www.51ape.com/artist/"
-	reString = r'<div class="gs_a"><a href="(http://www.51ape.com/\w*/)" class="c47 f_14 b yh">(.*)</a></div>'
+	# url = "http://www.51ape.com/artist/"
+	# reString = r'<div class="gs_a"><a href="(http://www.51ape.com/\w*/)" class="c47 f_14 b yh">(.*)</a></div>'
 
-	resultsList = spider.getArtistUrl(url, reString)
+	# resultsList = spider.spiderUrl(url, reString)
 
-	for m in resultsList:
-		sql = "insert into artist(`artist`, `url`) values('%s', '%s');" %(m.group(2), m.group(1))
-		dao.launchSQL(sql)
+	# for m in resultsList:
+	# 	sql = "insert into artist(`artist`, `url`) values('%s', '%s');" % (m.group(2), m.group(1))
+	# 	dao.launchSQL(sql)
+	
+	sql  = "select * from artist;"
+
+	results = dao.launchSQL(sql)
+
+	for row in results :
+		print row[2], row[1]
+		spider.getArtistMuisc(row[2], row[1])
