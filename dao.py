@@ -46,9 +46,9 @@ class Dao():
 	def saveMusic(self, title, musicName, artist, panUrl, pwd):
 		try:
 			sql = "insert into music(`title`, `musicName`, `artist`, `url`, `password`) values('%s', '%s', '%s', '%s', '%s');" % (title, musicName, artist, panUrl, pwd)
-			self.dao.launchSQL(sql)
-		except:
-			print("save Music fail", title, musicName, artist)
+			self.launchSQL(sql)
+		except Exception as e:
+			print("save Music fail", e, title, musicName, artist)
 			print(chardet.detect(title), chardet.detect(musicName), chardet.detect(artist))
 
 if __name__ == '__main__':
