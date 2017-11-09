@@ -25,7 +25,7 @@ class Spider():
 		headers = headers or self.headers
 		try:
 
-			if data :
+			if data:
 				data = urllib.urlencode(data)
 
 			request = urllib2.Request(url, data, headers)
@@ -64,56 +64,22 @@ class Spider():
 
 	def getArtistMuisc(self, url, artist, headers = None, data = {}):
 		page = self.GET(url)
-		if isinstance(artist, unicode) :
+		if isinstance(artist, unicode):
 			artist = artist.encode('utf-8')
 		reString = r'<a href="/.*/index_(\d*).html">尾页</a>'
-		if type(page) == type('a') :
+		if type(page) == type('a'):
 			results = re.search(re.compile(reString, re.S), page)
 			if results :
 					maxPage = int(results.group(1))
 					print("maxPage %d" % (maxPage))
-					for i in range(1, maxPage+1) :
+					for i in range(1, maxPage+1):
 						tempUrl = url
-						if i != 1 :
+						if i != 1:
 							tempUrl = url + 'index_' + str(i) + '.html'
-						print("spider url: %s" % (tempUrl))
-						page = self.GET(tempUrl)
-						reString = r'<a href="(http://www.51ape.com/ape/\d*.html)" class="wm210 c3b fl f_14 over t20d ml_1" title="(%s.*)">(.*)</a>' % (artist)
-						results = self.spiderPage(page, reString)
-						i = 1
-						for m in results :
-							tempUrl = m.group(1)
-							title = m.group(2)
-							musicName = m.group(3)
-							#print(tempUrl, title, musicName)
-							panUrl, pwd = self.getMusicUrl(tempUrl,title, musicName, artist)
-							try:
-								sql = "insert into music(`title`, `musicName`, `artist`, `url`, `password`) values('%s', '%s', '%s', '%s', '%s');" % (title, musicName, artist, panUrl, pwd)
-								self.dao.launchSQL(sql)
-								print sql
-							except:
-								print("encode fail", tempUrl, title, musicName, artist)
-								print(chardet.detect(tempUrl), chardet.detect(title), chardet.detect(musicName), chardet.detect(artist))
-							time.sleep(1)
-							print(i)
-							i = i + 1
+						print("[spider url]: %s" % (tempUrl))
+						self.getPageMusicUrl(artist, page = None, url = tempUrl)
 			else:
-				reString = r'<a href="(http://www.51ape.com/ape/\d*.html)" class="wm210 c3b fl f_14 over t20d ml_1" title="(%s.*)">(.*)</a>' % (artist)
-				results = self.spiderPage(page, reString)
-				for m in results :
-					tempUrl = m.group(1)
-					title = m.group(2)
-					musicName = m.group(3)
-					#print(tempUrl, title, musicName)
-					panUrl, pwd = self.getMusicUrl(tempUrl,title, musicName, artist)
-					try:
-						sql = "insert into music(`title`, `musicName`, `artist`, `url`, `password`) values('%s', '%s', '%s', '%s', '%s');" % (title, musicName, artist, panUrl, pwd)
-						self.dao.launchSQL(sql)
-						print sql
-					except:
-						print("encode fail", tempUrl, title, musicName, artist)
-						print(chardet.detect(tempUrl), chardet.detect(title), chardet.detect(musicName), chardet.detect(artist))
-					time.sleep(1)
+				self.getPageMusicUrl(artist, page)
 
 	def getMusicUrl(self, url, title, musicName, artist):
 		page = self.GET(url)
@@ -123,20 +89,42 @@ class Spider():
 			panUrl = None
 			pwd = None
 
-			for tempM in tempResult1 :
+			for tempM in tempResult1:
 				print(tempM.group(1))
 				panUrl = tempM.group(1)
 
 			reString2 = r'''<b class="mt_1 yh d_b" style=".*">提取<em class="dn"></em>密码：(.*)</b>'''
 			tempResult2 = self.spiderPage(page, reString2)
 
-			for tempM in tempResult2 :
+			for tempM in tempResult2:
 				print(tempM.group(1))
 				pwd = tempM.group(1)
 			print("----------A---------")
 			return panUrl, pwd
 
+	def getPageMusicUrl(self, artist, page = None, url = None, reString = None):
+		reString = reString or r'<a href="(http://www.51ape.com/ape/\d*.html)" class="wm210 c3b fl f_14 over t20d ml_1" title="(%s.*)">(.*)</a>' % (artist)
+		if not page:
+			page = self.GET(url)
 
+		if type(page) == type('a'):
+			results = self.spiderPage(page, reString)
+			i = 1
+			for m in results:
+				tempUrl = m.group(1)
+				title = m.group(2)
+				musicName = m.group(3)
+
+				panUrl, pwd = self.getMusicUrl(tempUrl,title, musicName, artist)
+
+				self.dao.saveMusic(title, musicName, artist, panUrl, pwd)
+
+				time.sleep(1)
+
+				print("page %d music" % (i))
+				i = i + 1
+
+			print("[total] %d", %(i-1))
 
 if __name__ == '__main__':
 	spider = Spider()

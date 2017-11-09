@@ -8,6 +8,7 @@
 ##]]
 
 import pymysql
+import chardet
 
 class Dao():
 
@@ -41,6 +42,14 @@ class Dao():
 		except Exception as e:
 			print "sql error", sql, e
 			self.db.rollback()
+
+	def saveMusic(self, title, musicName, artist, panUrl, pwd):
+		try:
+			sql = "insert into music(`title`, `musicName`, `artist`, `url`, `password`) values('%s', '%s', '%s', '%s', '%s');" % (title, musicName, artist, panUrl, pwd)
+			self.dao.launchSQL(sql)
+		except:
+			print("save Music fail", title, musicName, artist)
+			print(chardet.detect(title), chardet.detect(musicName), chardet.detect(artist))
 
 if __name__ == '__main__':
 	dao = Dao()
