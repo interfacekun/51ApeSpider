@@ -124,7 +124,7 @@ class Spider():
 				print("page %d music" % (i))
 				i = i + 1
 
-			print("[total] %d", %(i-1))
+			print("[total] %d" % (i-1))
 
 if __name__ == '__main__':
 	spider = Spider()
