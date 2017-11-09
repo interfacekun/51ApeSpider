@@ -117,10 +117,14 @@ class Spider():
 
 				panUrl, pwd = self.getMusicUrl(tempUrl,title, musicName, artist)
 
+				print("title:%s" % (title))
+				print("musicName:%s" % (musicName))
+				print("artist:%s" % (artist))
+				
 				self.dao.saveMusic(title, musicName, artist, panUrl, pwd)
-
+				
 				time.sleep(1)
-
+				
 				print("page %d music" % (i))
 				i = i + 1
 
